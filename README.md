@@ -1,8 +1,8 @@
-# Express-Typescript-Jest-Boilerplate
+# Express-Prisma-Graphql-Boilerplate
 
 Skeleton for Express.js applications written in TypeScript with testing support
 and CI/CD out of the box.
-
+Fork from repo: https://github.com/adomne/express-ts-jest-boilerplate.git
 <br>
 
 ## Purpose
@@ -34,15 +34,6 @@ with typescript, testing support and default CI/CD configuration.
 - [x] `morgan`
 
 <br>
-
-## Set Application
-
-- Install using `npx @adomne/express-ts-jest-boilerplate my-own-starter-project`
-
-**OR**
-
-- Clone the Application `git clone https://github.com/adomne/express-ts-jest-boilerplate.git`
-- Install the dependencies `npm install`
 
 <br>
 
@@ -86,8 +77,4 @@ with typescript, testing support and default CI/CD configuration.
 
 <br>
 <br>
-
-<hr/>
-
-#### *Follow us on* [Twitter](http://www.twitter.com/adomneHQ), [Instagram](http://www.instagram.com/adomnehq), [Linkedin](https://www.linkedin.com/company/adomnehq), and [Github](http://www.github.com/adomne).
 
