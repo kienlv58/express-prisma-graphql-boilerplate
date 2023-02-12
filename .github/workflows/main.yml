@@ -1,0 +1,54 @@
+#  Uncomment all code below
+
+# name: Express App Starter Kit
+
+# on:
+#   push:
+#     branches: [master]
+
+# jobs:
+#   check-tests:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#       - id: testing
+#         uses: ./.github/actions/all-tests
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checking Github branch
+#         run: echo ${{github.ref}}
+
+#       - name: Checks-out Repository
+#         uses: actions/checkout@v2
+
+#       - name: Jest Testing
+
+#       - name: Setup SSH - Production Branch
+#         if: github.ref == 'refs/heads/master'
+#         run: |
+#           mkdir -p ~/.ssh/
+#           echo "$SSH_PRIVATE_KEY" > ./deploy.key
+#           sudo chmod 600 ./deploy.key
+#           echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+#         shell: bash
+#         env:
+#           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+#           SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+
+#       - uses: actions/setup-node@v2
+#         with:
+#           node-version: 16
+
+#       - name: Install PM2 - Production Branch
+#         if: github.ref == 'refs/heads/master'
+#         run: npm install pm2
+
+#       - name: Create env file & Deploy - Production Branch
+#         if: github.ref == 'refs/heads/master'
+#         run: |
+#           touch .env.production
+#           echo PORT=3150 >> .env
+#           echo MONGO_URI=${{ secrets.MONGO_URI }} >> .env
+#           npm run setup

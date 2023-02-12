@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "outDir": "./dist",
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2020",
+    "lib": ["es2020", "esnext.asynciterable"],
+    "allowJs": true,
+    "checkJs": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true, 
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "typeRoots": [
+      "./src/@types",
+      "./node_modules/@types",
+    ],
+    "paths": {
+      "@/*": ["./*"],
+    },
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    ".eslintrc.js",
+    "./src/**/*.ts", 
+    "./tests/**/*.ts",
+    "ecosystem.config.js",
+    "./src/@types/*",
+    "./prisma/**/*.ts"
+  ],
+}

@@ -1,0 +1,40 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "EXPRESS-TS-JEST-BOILERPLATE",
+    "dateExported": "2022-02-17T15:56:15.833Z",
+    "version": "1.1",
+    "folders": [
+        {
+            "containerId": "",
+            "sortNum": 10000,
+            "name": "First",
+            "_id": "c6eac02b-0092-4aa4-8d2f-fc1af6b33a27",
+            "created": "2022-02-17T15:54:50.070Z"
+        }
+    ],
+    "requests": [
+        {
+            "containerId": "c6eac02b-0092-4aa4-8d2f-fc1af6b33a27",
+            "sortNum": 10000,
+            "headers": [
+                {
+                    "name": "Accept",
+                    "value": "*/*"
+                },
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)"
+                }
+            ],
+            "colId": "315409ca-58a1-4847-b4fe-0612e846aa9e",
+            "name": "Get All Contacts",
+            "url": "http://localhost:3000/first/all",
+            "method": "GET",
+            "modified": "2022-02-17T15:55:46.906Z",
+            "created": "2022-02-17T15:55:02.804Z",
+            "_id": "d008912f-6bff-4070-bd31-c830f9db19af",
+            "params": [],
+            "tests": []
+        }
+    ]
+}

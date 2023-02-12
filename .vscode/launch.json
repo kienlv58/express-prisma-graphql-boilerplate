@@ -1,0 +1,34 @@
+{
+    "configurations": [
+    {
+        "type": "node",
+        "name": "Debug Jest Tests",
+        "request": "launch",
+        "args": [
+            "--inspect-brk",
+            "${workspaceRoot}/node_modules/.bin/jest",
+            "--runInBand",
+            "--config",
+            "${workspaceRoot}/jest.config.js"
+        ],
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "disableOptimisticBPs": true,
+        "windows": {
+            "args": [
+                "--inspect-brk",
+                "${workspaceRoot}/node_modules/jest/bin/jest.js",
+                "--runInBand",
+                "--config",
+                "${workspaceRoot}/jest.config.json"
+            ]
+        },
+        "smartStep": true,
+        "skipFiles": [
+            "<node_internals>/**",
+            "node_modules/**"
+        ]
+    },
+    ]
+}

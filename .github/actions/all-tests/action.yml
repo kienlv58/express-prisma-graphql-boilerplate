@@ -1,0 +1,20 @@
+#  Uncomment all code below
+
+# name: Test Cases
+# description: Run Tests using Jest Framework
+
+# runs:
+#   using: composite
+#   steps:
+#     - uses: actions/setup-node@v2
+#       with:
+#         node-version: 14
+#     - name: Install modules
+#       shell: bash
+#       working-directory: .
+#       run: |
+#         npm install
+#     - name: Run tests
+#       shell: bash
+#       run: |
+#         npm test

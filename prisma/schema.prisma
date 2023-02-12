@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  editor
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  user_name  String
+  email      String
+  password   String
+  role       Role      @default(editor)
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@unique([user_name, email])
+  @@index([user_name, email])
+}
+
+model Author {
+  id         Int       @id @default(autoincrement())
+  name       String
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+  book       Book[]
+
+  @@unique([name])
+}
+
+model Book {
+  id              Int                 @id @default(autoincrement())
+  title           String
+  description     String              @db.Text
+  imageThumbnail  String
+  languageName    String
+  isPublished     Boolean             @default(false)
+  isDeleted       Boolean             @default(false)
+  author          Author?             @relation(fields: [authorId], references: [id])
+  authorId        Int?
+  categories      CategoriesOnBooks[]
+
+  published_at   DateTime?
+  created_at     DateTime?        @default(now())
+  updated_at     DateTime?        @default(now())
+
+  @@index([title, authorId])
+}
+
+model Category {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  displayName       String
+  created_at        DateTime?           @default(now())
+  updated_at        DateTime?           @default(now())
+  categoriesOnBooks CategoriesOnBooks[]
+
+  @@unique([name])
+  @@index([name, displayName])
+}
+
+// join table
+model CategoriesOnBooks {
+  category   Category  @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  book       Book      @relation(fields: [bookId], references: [id])
+  bookId     Int
+  created_at DateTime? @default(now())
+  updated_at DateTime? @default(now())
+
+  @@unique([categoryId, bookId])
+}

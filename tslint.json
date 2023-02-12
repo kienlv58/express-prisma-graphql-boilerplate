@@ -1,0 +1,21 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended"],
+  "jsRules": {
+    "no-console": false
+  },
+  "rules": {
+    "no-console": false,
+    "trailing-comma": [false],
+    "eofline": false
+  },
+  "rulesDirectory": [],
+  // "overrides": {
+  //   "files": ["**/*.ts"],
+  //   "parser": "typescript-eslint-parser",
+  //   "rules": {
+  //     "no-undef": 
+  //     "off"
+  //   }
+  // }
+}
