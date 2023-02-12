@@ -7,15 +7,7 @@
   "rules": {
     "no-console": false,
     "trailing-comma": [false],
-    "eofline": false
+    "eofline": false,
   },
   "rulesDirectory": [],
-  // "overrides": {
-  //   "files": ["**/*.ts"],
-  //   "parser": "typescript-eslint-parser",
-  //   "rules": {
-  //     "no-undef": 
-  //     "off"
-  //   }
-  // }
 }

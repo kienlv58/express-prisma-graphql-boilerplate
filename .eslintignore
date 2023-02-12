@@ -20,3 +20,5 @@ jest.config.js
 
 # Bin Folder
 bin
+
+/prisma/generated/*

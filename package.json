@@ -19,14 +19,14 @@
     "postinstall": "npx husky install",
     "prepare": "husky install",
     "precommit": "npm run lint-fix && npm run pretty",
-    "prepush": "npm run lint",
+    "prepush": "npm run lint && npm run test && npm run test:coverage",
     "seed": "prisma db seed",
     "migrate": "prisma migrate dev",
     "db-push": "prisma db push",
     "db-reset": "prisma migrate reset",
     "create-migrate": "prisma migrate dev --create-only",
     "migrate-deploy": "prisma migrate deploy",
-    "generate-type":"prisma generate"
+    "generate-type": "prisma generate"
   },
   "keywords": [
     "express",
@@ -56,6 +56,7 @@
     "graphql": "^15.3.0",
     "graphql-fields": "^2.0.3",
     "graphql-query-complexity": "^0.12.0",
+    "graphql-scalars": "^1.20.1",
     "graphql-type-json": "^0.3.2",
     "helmet": "^5.0.2",
     "mongoose": "^6.2.1",

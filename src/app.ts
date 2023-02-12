@@ -12,7 +12,7 @@ import queryComplexity, {
     fieldExtensionsEstimator,
 } from "graphql-query-complexity";
 import { buildSchema } from "type-graphql";
-import { resolvers } from "@generated/type-graphql";
+import { resolvers } from "../prisma/generated/type-graphql";
 import path from "path";
 import customResolvers from "./resolvers";
 
@@ -71,7 +71,7 @@ const appConfig = async (): Promise<Application> => {
         resolvers:[...customResolvers, ...resolvers],
         nullableByDefault: true,
         validate: false,
-        emitSchemaFile: path.resolve(__dirname, "snapshots/schema", "schema.gql"),
+        emitSchemaFile: path.resolve(__dirname, "../prisma/snapshots/schema", "schema.gql"),
     });
 
   

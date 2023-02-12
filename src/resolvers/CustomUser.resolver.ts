@@ -1,5 +1,5 @@
 import { Ctx, FieldResolver, Query, Resolver, Root } from "type-graphql";
-import { User, Book, Author } from "@generated/type-graphql";
+import { User, Book, Author } from "../../prisma/generated/type-graphql";
 import { PrismaContext } from "../utils/prisma-client";
 
 // custom resolver for custom business logic using Prisma Client
