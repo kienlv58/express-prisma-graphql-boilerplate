@@ -44,6 +44,7 @@ const bootstrap = async () => {
     process.on("SIGINT", async () => gracefulShutdown("SIGINT"));
 
     process.on("SIGINT", async () => gracefulShutdown("SIGINT"));
+    return server;
 };
 
 export default bootstrap();

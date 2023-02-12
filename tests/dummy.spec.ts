@@ -1,7 +1,7 @@
+import { Server } from "http";
 import request from "supertest";
 
-import App from "../src/app";
-
+import server from "../src/server";
 
 // ========== API Test ============
 
@@ -10,12 +10,14 @@ import App from "../src/app";
  */
 describe("Get all contacts request", function() {
     let responseObject: any = [];
+    let App: Server;
+    beforeAll(async () => {
+        App = await server;
 
-    beforeAll(() => {
         responseObject = [
             {
                 name: "Rob",
-                luckyNumber: 42
+                luckyNumber: 45
             },
             {
                 name: "Henry",
@@ -25,7 +27,13 @@ describe("Get all contacts request", function() {
     });
 
     afterAll(async () => {
-        await App.close();// close the server connection
+        await App.close(function(err: any) {
+            if (err) {
+                console.error("Close server error", err);
+            } else {
+                console.log("Close server success");
+            }
+        });
         await new Promise<void>(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
     });
 
