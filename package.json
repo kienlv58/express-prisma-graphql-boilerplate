@@ -8,10 +8,10 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production node dist/server.js",
-    "dev": "cross-env NODE_ENV=development nodemon --watch '*.ts' --watch '*.json' --exec 'ts-node --files' ./src/server.ts",
-    "setup": "env $(cat .env | grep -v \"#\" | xargs) pm2 deploy ecosystem.config.js production setup",
-    "test": "jest --detectOpenHandles -c ./jest.config.js",
-    "test:coverage": "jest --coverage -c ./jest.config.js",
+    "dev": "dotenv -e .env.development -- nodemon --watch '*.ts' --watch '*.json' --exec 'ts-node --files' ./src/server.ts",
+    "setup": "env $(cat .env.production | grep -v \"#\" | xargs) pm2 deploy ecosystem.config.js production setup",
+    "test": "dotenv -e .env.test -- jest --detectOpenHandles -c ./jest.config.js",
+    "test:coverage": "dotenv -e .env.test -- jest --coverage -c ./jest.config.js",
     "test:watch": "jest --watch",
     "lint": "eslint src/**/*.ts && eslint tests/**/*.ts",
     "lint-fix": "eslint --fix 'src/**/*.ts' && eslint --fix 'tests/**/*.ts'",
@@ -47,6 +47,7 @@
   "dependencies": {
     "@prisma/client": "4.10.1",
     "class-validator": "^0.14.0",
+    "config": "^3.3.9",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "envalid": "^7.3.1",
@@ -65,6 +66,7 @@
     "type-graphql": "^1.1.1"
   },
   "devDependencies": {
+    "@types/config": "^3.3.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/express-actuator": "^1.8.0",

@@ -33,6 +33,7 @@
     "./tests/**/*.ts",
     "ecosystem.config.js",
     "./src/@types/*",
-    "./prisma/**/*.ts"
+    "./prisma/**/*.ts",
+    "./config/*.ts"
   ],
 }

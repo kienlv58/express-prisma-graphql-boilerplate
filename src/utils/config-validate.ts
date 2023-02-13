@@ -2,7 +2,6 @@ import * as envalid from "envalid";
 
 import dotenv from "dotenv";
 
-// dotenv.config({ path: "./src/config/.env" });
 dotenv.config();
 const config = (): IServerConfig => {
     // eslint-disable-next-line no-useless-catch

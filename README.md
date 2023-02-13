@@ -37,6 +37,46 @@ with typescript, testing support and default CI/CD configuration.
 
 <br>
 
+## Setup and Run
+Install dotenv-cli to use multiple .env file (.env.test, .env.development, .env.production)
+```
+yarn global add dotenv-cli
+```
+
+Create the .env.development file and add the following params:
+```
+PORT = 3000
+BASE_URL = github.com
+NODE_ENV = development
+DB_HOST = localhost
+DB_NAME = db_test
+DB_PASSWORD = root
+DB_PORT = 3306
+DB_USER = root
+DATABASE_URL=mysql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+```
+After install node_modules. Run script to migrate database
+
+```
+yarn migrate
+```
+
+Maybe need to seed the database
+```
+yarn seed
+```
+
+Generate the type-graphql from prisma
+```
+yarn generate-type
+```
+
+Start the dev server
+```
+yarn dev
+```
+<br>
+
 ## Project Structure
 
 | Name                              | Description                                          |
@@ -47,12 +87,14 @@ with typescript, testing support and default CI/CD configuration.
 | **api/**                          | Endpoint testing (using thunder client ext)          |
 | **config/**                       | Environment files                                    |
 | **CI/**                           | CI/CD configuration steps                            |
+| **prisma/**                       | Include prisma schema, type-graphql generated        |
 | **dist/**                         | Compiled source files will be placed here            |
 | **src/**                          | Source files                                         |
 | **src/controllers**               | Business logic for routes                            |
 | **src/db**                        | DB connectors                                        |
 | **src/middleware/**               | Middlewares like Async Handler feature               |
 | **src/models**                    | Model definitions                                    |
+| **src/resolvers/**                | Create custom resolvers for type-graphql             |
 | **src/routers**                   | Route definitions                                    |
 | **src/services**                  | 3rd party services                                   |
 | **tests/**                        | Test cases will be placed here                       |

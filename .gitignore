@@ -131,6 +131,6 @@ dist
 
 #  Removing env file
 *.env.*
-
+!.env.example
 prisma/generated
 prisma/snapshots
