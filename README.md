@@ -29,9 +29,12 @@ with typescript, testing support and default CI/CD configuration.
 - [x] `express-actuator`
 - [x] `helmet`
 - [x] `dotenv`
+- [x] `node-config`
 - [x] `cors`
-- [x] `mongoose`
 - [x] `morgan`
+- [x] `prisma`
+- [x] `graphql`
+- [x] `type-graphql`
 
 <br>
 
@@ -75,6 +78,8 @@ Start the dev server
 ```
 yarn dev
 ```
+
+And go to the url: http://localhost:3000/graphql to see the result.
 <br>
 
 ## Project Structure
