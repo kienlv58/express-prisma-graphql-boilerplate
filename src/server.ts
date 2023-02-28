@@ -1,7 +1,7 @@
 import "reflect-metadata";
 
 import serverConfig from "./utils/config-validate";
-import app from "./app";
+import httpServer from "./app";
 
 import config from "config";
 const dbConf = config.get("db");
@@ -14,7 +14,7 @@ const PORT = serverConfig.port;
 
 const bootstrap = async () => {
     /* Server startup */
-    const serverApp = await app();
+    const serverApp = await httpServer();
     const server = serverApp.listen(PORT, async () => {
     // tslint:disable-next-line: no-console
         console.log("\n");

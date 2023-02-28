@@ -45,7 +45,10 @@
   "author": "Kienlv",
   "license": "Apache-2.0",
   "dependencies": {
+    "@apollo/server": "^4.4.0",
     "@prisma/client": "4.10.1",
+    "apollo-server": "^3.11.1",
+    "apollo-server-plugin-query-complexity": "^4.0.0",
     "class-validator": "^0.14.0",
     "config": "^3.3.9",
     "cors": "^2.8.5",

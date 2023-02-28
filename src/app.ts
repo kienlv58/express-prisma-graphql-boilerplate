@@ -1,21 +1,28 @@
-import express, { Application } from "express";
+import express, { Application, Request } from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import bodyParser from "body-parser";
 import actuator from "express-actuator";
-import { graphqlHTTP } from "express-graphql";
-import { GraphQLError,
-    //  GraphQLInputObjectType, GraphQLInt, GraphQLObjectType, GraphQLSchema, GraphQLString
+import { GraphQLFormattedError,
 } from "graphql";
-import queryComplexity, {
+import {
     simpleEstimator,
     fieldExtensionsEstimator,
+    directiveEstimator,
 } from "graphql-query-complexity";
+import ApolloServerPluginQueryComplexity, {
+    QueryComplexityError,
+} from "apollo-server-plugin-query-complexity";
+import { ApolloServer } from "@apollo/server";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+
 import { buildSchema } from "type-graphql";
 import { resolvers } from "../prisma/generated/type-graphql";
 import path from "path";
 import customResolvers from "./resolvers";
-
+import http from "http";
 
 // Express App
 const app: Application = express();
@@ -24,6 +31,7 @@ const app: Application = express();
 // * Route Files
 import first from "./routers/first";
 import prisma from "./utils/prisma-client";
+import { PrismaClient } from "@prisma/client";
 
 // * Logging (Development)
 if (process.env.NODE_ENV === "development") {
@@ -62,8 +70,14 @@ app.use(actuator());
 // ! Routes
 app.use("/first", first);
 
+interface MyContext {
+    token?: string;
+    prisma: PrismaClient
+  }
 // const a = customResolvers;
-const appConfig = async (): Promise<Application> => {
+const appConfig = async (): Promise<http.Server> => {
+
+    const httpServer = http.createServer(app);
     const schema = await buildSchema({
         
         // resolvers, // only resolvers generate by type-graphql
@@ -73,117 +87,52 @@ const appConfig = async (): Promise<Application> => {
         validate: false,
         emitSchemaFile: path.resolve(__dirname, "../prisma/snapshots/schema", "schema.gql"),
     });
+    const server = new ApolloServer<MyContext>({
+        schema,
+        plugins: [ApolloServerPluginDrainHttpServer({ httpServer }),
+            ApolloServerPluginQueryComplexity({
+                estimators: [fieldExtensionsEstimator(),directiveEstimator(), simpleEstimator({ defaultComplexity:1 })],
+                maximumComplexity: 2,
+            }),
+        ],
+        formatError: (formattedError: GraphQLFormattedError, error: unknown) => {
+            if (error instanceof QueryComplexityError) {
+                return {
+                    message: `Sorry, your request is too complex. Your request had a complexity of ${error.extensions.complexity}, but we limit it to ${error.extensions.maximumComplexity}.`,
+                    extensions: {
+                        code: "QUERY_TOO_COMPLEX",
+                        complexity: error.extensions.complexity,
+                        maximumComplexity: error.extensions.maximumComplexity,
+                    },
+                };
+            }
+            console.log("formattedError",formattedError);
+            
+            return formattedError;
+        },
+        
+    });
+    // Ensure we wait for our server to start
+    await server.start();
+
+    const generateContext = (req: Request): MyContext =>({
+        token: req.headers.token as string,
+        prisma,
+    });
+
+    app.use(
+        "/",
+        cors<cors.CorsRequest>(),
+        bodyParser.json(),
+        // expressMiddleware accepts the same arguments:
+        // an Apollo Server instance and optional configuration options
+        expressMiddleware(server, {
+            context: async ({ req }) => generateContext(req),
+        }),
+    );
 
   
-    app.use(
-        "/graphql",
-        graphqlHTTP(async (req, res, params) => ({
-            schema,
-            context: { prisma },
-            graphiql: true,
-            validationRules: [
-                /**
-           * This provides GraphQL query analysis to reject complex queries to your GraphQL server.
-           * This can be used to protect your GraphQL servers
-           * against resource exhaustion and DoS attacks.
-           * More documentation can be found (here)[https://github.com/ivome/graphql-query-complexity]
-           */
-                queryComplexity({
-                    // The maximum allowed query complexity, queries above this threshold will be rejected
-                    maximumComplexity: 20,
-                    // The query variables. This is needed because the variables are not available
-                    // in the visitor of the graphql-js library
-                    variables: params?.variables || undefined,
-                    // Optional callback function to retrieve the determined query complexity
-                    // Will be invoked weather the query is rejected or not
-                    // This can be used for logging or to implement rate limiting
-                    onComplete: (complexity: number) => {
-                        // tslint:disable-next-line: no-console
-                        console.log("Determined query complexity: ", complexity);
-                    },
-                    createError: (max: number, actual: number) => {
-                        return new GraphQLError(
-                            `Query is too complex: ${actual}. Maximum allowed complexity: ${max}`,
-                        );
-                    },
-                    // Add any number of estimators. The estimators are invoked in order, the first
-                    // numeric value that is being returned by an estimator is used as the field complexity.
-                    // If no estimator returns a value, an exception is raised.
-                    estimators: [
-                        // fieldConfigEstimator(),
-                        fieldExtensionsEstimator(),
-                        // Add more estimators here...
-                        // This will assign each field a complexity of 1 if no other estimator
-                        // returned a value.
-                        simpleEstimator({
-                            defaultComplexity: 1,
-                        }),
-                    ],
-                }),
-            ],
-        })),
-    );
-  
-    return app;
+    return httpServer;
 };
   
 export default appConfig;
-
-/**
- * 
- * Example build schema from scratch
- * 
- * const AuthorType = new GraphQLObjectType({
-        name: "Author",
-        description: "This is author",
-        fields: () =>({
-            id:{
-                type: GraphQLInt,
-                // resolve:()=>1
-            },
-            name:{
-                type: GraphQLString,
-                // resolve: () => "Author name"
-            }
-        })
-    });
-
-    const WhereType = new GraphQLInputObjectType({
-        name: "Where",
-        description: "This is where condition",
-        fields: () =>({
-            id:{
-                type: GraphQLInt,
-            },
-            name:{
-                type: GraphQLString,
-            }
-        })
-    });
-
-
-    const schema = new GraphQLSchema({
-        query: new GraphQLObjectType({
-            name:"test",
-            fields: ()=>({
-                message: {
-                    type: GraphQLString,
-                    resolve: () => "Hello"
-                },
-                messageId: {
-                    type: GraphQLString,
-                    args:{
-                        id: { type: GraphQLInt }
-                    },
-                    resolve: (parent, args) =>" test" + args.id
-                },
-                messageByInputObj: {
-                    type: AuthorType,
-                    args:{ where: { type: WhereType! } },
-                    resolve: (parent, args) => {
-                        return { id: args.where.id, name:"test " + args.where.name };}
-                }
-            })
-        })
-    });
- */
