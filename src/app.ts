@@ -96,6 +96,7 @@ const appConfig = async (): Promise<http.Server> => {
             }),
         ],
         formatError: (formattedError: GraphQLFormattedError, error: unknown) => {
+            console.log("formattedError",formattedError);
             if (error instanceof QueryComplexityError) {
                 return {
                     message: `Sorry, your request is too complex. Your request had a complexity of ${error.extensions.complexity}, but we limit it to ${error.extensions.maximumComplexity}.`,
