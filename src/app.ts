@@ -4,7 +4,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import actuator from "express-actuator";
-import { GraphQLFormattedError,
+import { GraphQLError, GraphQLFormattedError,
 } from "graphql";
 import {
     simpleEstimator,
@@ -18,12 +18,12 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 
-import { buildSchema } from "type-graphql";
+import { ArgumentValidationError, buildSchema } from "type-graphql";
 import { resolvers } from "../prisma/generated/type-graphql";
 import path from "path";
 import customResolvers from "./resolvers";
 import http from "http";
-
+import { unwrapResolverError } from "@apollo/server/errors";
 // Express App
 const app: Application = express();
 
@@ -75,6 +75,19 @@ interface MyContext {
     prisma: PrismaClient
   }
 // const a = customResolvers;
+
+
+export class ValidatorError extends GraphQLError {
+    constructor(message: string, data: ArgumentValidationError) {
+        super(message, { extensions: { 
+            code: "VALIDATE_ERROR",
+            ...data
+        } });
+        this.name = "VALIDATE_ERROR";
+    }
+}
+  
+
 const appConfig = async (): Promise<http.Server> => {
 
     const httpServer = http.createServer(app);
@@ -84,7 +97,7 @@ const appConfig = async (): Promise<http.Server> => {
         // resolvers: ["./node_modules/@generated/type-graphql", __dirname + "/resolvers/**/*.resolver.{ts,js}"],
         resolvers:[...customResolvers, ...resolvers],
         nullableByDefault: true,
-        validate: false,
+        validate: { forbidUnknownValues: false },
         emitSchemaFile: path.resolve(__dirname, "../prisma/snapshots/schema", "schema.gql"),
     });
     const server = new ApolloServer<MyContext>({
@@ -92,11 +105,17 @@ const appConfig = async (): Promise<http.Server> => {
         plugins: [ApolloServerPluginDrainHttpServer({ httpServer }),
             ApolloServerPluginQueryComplexity({
                 estimators: [fieldExtensionsEstimator(),directiveEstimator(), simpleEstimator({ defaultComplexity:1 })],
-                maximumComplexity: 2,
+                maximumComplexity: 20,
             }),
         ],
         formatError: (formattedError: GraphQLFormattedError, error: unknown) => {
-            console.log("formattedError",formattedError);
+            const originalError = unwrapResolverError(error);
+
+            // Validation
+            if (originalError instanceof ArgumentValidationError) {
+                return new ValidatorError(originalError.message, originalError);
+            }
+            console.log("formattedError",formattedError, JSON.stringify(error));
             if (error instanceof QueryComplexityError) {
                 return {
                     message: `Sorry, your request is too complex. Your request had a complexity of ${error.extensions.complexity}, but we limit it to ${error.extensions.maximumComplexity}.`,
